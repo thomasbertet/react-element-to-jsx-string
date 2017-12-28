@@ -6,6 +6,7 @@ import {
   createStringTreeNode,
   createNumberTreeNode,
   createReactElementTreeNode,
+  createArrayTreeNode,
 } from './../tree';
 import type { TreeNode } from './../tree';
 
@@ -35,7 +36,7 @@ const filterProps = (originalProps: {}, cb: (any, string) => boolean) => {
 };
 
 const parseReactElement = (
-  element: ReactElement<*> | string | number,
+  element: ReactElement<*> | string | number | array,
   options: Options
 ): TreeNode => {
   const { displayName: displayNameFn = getReactElementDisplayName } = options;
@@ -44,6 +45,8 @@ const parseReactElement = (
     return createStringTreeNode(element);
   } else if (typeof element === 'number') {
     return createNumberTreeNode(element);
+  } else if (Array.isArray(element)) {
+    return createArrayTreeNode(element.map(e => parseReactElement(e, options)));
   } else if (!React.isValidElement(element)) {
     throw new Error(
       `react-element-to-jsx-string: Expected a React.Element, got \`${typeof element}\``

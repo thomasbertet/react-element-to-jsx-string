@@ -29,7 +29,7 @@ const preserveTrailingSpace = (s: string) => {
   return result;
 };
 
-export default (
+const formatTreeNode = (
   node: TreeNode,
   inline: boolean,
   lvl: number,
@@ -37,6 +37,12 @@ export default (
 ): string => {
   if (node.type === 'number') {
     return String(node.value);
+  }
+
+  if (node.type === 'array') {
+    return node.value
+      .map(v => formatTreeNode(v, inline, lvl, options))
+      .join('\n');
   }
 
   if (node.type === 'string') {
@@ -51,3 +57,5 @@ export default (
 
   throw new TypeError(`Unknow format type "${node.type}"`);
 };
+
+export default formatTreeNode;
